@@ -3,7 +3,7 @@ import { SnippetService } from './snippet.service';
 import { CreateSnippetDto } from './dto/create-snippet.dto';
 import { UpdateSnippetDto } from './dto/update-snippet.dto';
 
-@Controller('/api/snippets/')
+@Controller('api/snippets')
 export class SnippetController {
   constructor(private readonly snippetService: SnippetService) {}
 
@@ -12,7 +12,7 @@ export class SnippetController {
     return this.snippetService.create(createSnippetDto);
   }
 
-  @Get('')
+  @Get()
   findAll(
     @Query('q') q?: string,
     @Query('tag') tag?: string,

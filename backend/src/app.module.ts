@@ -4,8 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    SnippetModule, 
-    MongooseModule.forRoot('mongodb://localhost:27017/snippets')
+    SnippetModule,
+    MongooseModule.forRoot(
+      'mongodb://admin:password@127.0.0.1:27017/snippets?authSource=admin'
+    ),
   ],
 })
 export class AppModule {}

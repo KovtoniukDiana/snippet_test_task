@@ -1,0 +1,95 @@
+'use client'
+import React, {useState} from 'react'
+import {Form, Input, Button, Select, SelectItem, Textarea} from "@heroui/react";
+import { createSnippet } from '@/src/lib/snippets.api';
+import { CreateSnippetDto } from '@/src/types/snippet';
+
+interface IProps {
+    onClose: () => void;
+}
+
+
+export default function AddingForm({onClose}: IProps) {
+
+    const [formData, setFormData] = useState<CreateSnippetDto>(
+        {
+            title: '',
+            content: '',
+            tags: [],
+            type: 'note'
+        }
+    )
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const payload: CreateSnippetDto = {
+            title: formData.title,
+            content: formData.content,
+            tags: formData.tags,
+            type: formData.type,
+        };
+
+        await createSnippet(payload);
+        onClose();
+    }
+
+  return (
+    <Form className='w-full' onSubmit={handleSubmit} >
+
+        <Input placeholder='Title' isRequired name='title' value={formData.title}
+        classNames={{inputWrapper: 'bg-default-100', input: 'text-sm focus: outline-none'}}
+        onChange={(e) => setFormData({...formData, title: e.target.value})}
+        validate={(value) => {
+            if(!value) return "Заголовок обов'язковий"
+
+        }}  />
+
+        <Textarea placeholder='Content' name='content' value={formData.content}
+        classNames={{inputWrapper: 'bg-default-100', input: 'text-sm focus: outline-none'}}
+        onChange={(e) => setFormData({...formData, content: e.target.value})}
+        validate={(value) => {
+            if(!value) return "Контент обов'язковий"
+
+        }}  />
+
+        <Input
+        name='Tags'
+        placeholder='Tags (через кому)'
+        value={(formData.tags ?? []).join(', ')}
+        onChange={(e) => setFormData({
+            ...formData,
+            tags: e.target.value.split(',').map(t => t.trim())
+        })}
+        />
+
+
+        <Select
+        placeholder="Type"
+        variant="bordered"
+        classNames={{
+            label: "text-default-500 pb-2",
+            trigger: "bg-pink-100 border-2 border-gray-100",
+            popoverContent: "bg-pink-50 border border-gray-100",
+            listboxWrapper: "bg-pink-50",
+        }}
+        >
+
+            <SelectItem key="note">Нотатка</SelectItem>
+            <SelectItem key="command">Команда</SelectItem>
+            <SelectItem key="link">Посилання</SelectItem>
+        </Select>
+
+        <div className='flex justify-between'>
+            <Button color="danger" variant="light" onPress={onClose}>
+                Закрити
+            </Button>
+            <Button color="primary" type='submit'>
+                Продовжити
+            </Button>
+        </div>
+
+    </Form>
+  )
+}
