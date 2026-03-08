@@ -12,6 +12,7 @@ interface IProps {
 
 export default function CustomForm({ initialData, onSubmit , onClose}: IProps) {
 
+
     const [formData, setFormData] = useState<CreateSnippetDto>(
         {
             title: initialData?.title || '',
@@ -23,8 +24,15 @@ export default function CustomForm({ initialData, onSubmit , onClose}: IProps) {
 
 
     const handleSubmit = async (e: React.FormEvent) => {
-        await onSubmit(formData);
-        onClose();
+        e.preventDefault();
+        try {
+            await onSubmit(formData);
+            onClose();
+            window.location.reload();
+            
+        } catch (err) {
+            console.error("Помилка:", err);
+        }
     }
 
   return (

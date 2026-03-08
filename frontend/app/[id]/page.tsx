@@ -8,10 +8,13 @@ import EditModal from '@/src/components/editingModal';
 
 export default function SnippetPage() {
 
+
     const { id } = useParams();
     const [snippet, setSnippet] = useState<Snippet | null>(null);
     const [isModalOpen, setIsModalOpen] =  useState(false);
-    
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -19,17 +22,26 @@ export default function SnippetPage() {
         const snippetId = Array.isArray(id) ? id[0] : id;
 
         getSnippet(snippetId)
-        .then(setSnippet)
-        .catch(err => console.error(err))
+            .then((data) => {
+                setSnippet(data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setLoading(false);
+                setError(true);
+            });
+        
     }, [id]);
 
-    
+    if (loading) return <div className='text-lg flex justify-center pt-12'><p>Loading...</p></div>;
+
+    if (error || !snippet) return <div className='text-lg flex justify-center pt-12'><p>Сніпет не знайдено</p></div>;
 
 
   return (
-    <div className='h-screen bg-blue-100 flex flex-col items-center pt-17'>
-      {
-        snippet ? 
+    <div className='flex flex-col items-center pt-17'>
+      
         <div className='w-[85%] bg-white rounded-lg shadow-lg flex flex-col gap-4 p-4'>
             <div className='w-full flex justify-between'>
                 <p className="text-2xl font-bold">{snippet.title}</p>
@@ -59,11 +71,6 @@ export default function SnippetPage() {
             </p>
             <p className="mt-2 text-lg">{snippet.content}</p>
         </div>
-
-        :
-        
-        <div className='text-lg'>Loading...</div>
-      }
     </div>
   )
 }

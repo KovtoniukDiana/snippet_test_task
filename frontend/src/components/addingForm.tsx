@@ -10,8 +10,8 @@ interface IProps {
 export default function AddingForm({onClose} : IProps) {
 
     const handleSubmit = async (data: CreateSnippetDto) => {
-        await createSnippet(data);
-        onClose();
+      await createSnippet(data);
+      onClose();
     };
 
 

@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types  } from 'mongoose';
 import { Snippet } from './snippet.schema';
 import { CreateSnippetDto } from './dto/create-snippet.dto';
 import { UpdateSnippetDto } from './dto/update-snippet.dto';
@@ -37,23 +37,36 @@ export class SnippetService {
   }
 
   async findOne(id: string) {
+
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Невірний id');
+    }
+
     const snippet = await this.snippetModel.findById(id).exec();
 
     if (!snippet) throw new NotFoundException('Сніпет не знайдено');
-    return snippet;
-  }
+      return snippet;
+    }
 
   async update(id: string, updateSnippetDto: UpdateSnippetDto) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Невірний id');
+    }
+
     const updated = await this.snippetModel.findByIdAndUpdate(id, updateSnippetDto, { new: true }).exec();
 
     if (!updated) throw new NotFoundException('Сніпет не знайдено');
-    return updated;
-  }
+      return updated;
+    }
 
   async remove(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException('Невірний id');
+    }
+
     const deleted = await this.snippetModel.findByIdAndDelete(id).exec();
 
     if (!deleted) throw new NotFoundException('Сніпет не знайдено');
-    return { success: true };
-  }
+      return { success: true };
+    }
 }

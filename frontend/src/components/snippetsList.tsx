@@ -19,26 +19,27 @@ export default function SnippetsList() {
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
 
-
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearch(search);
-        }, 1000);
+      const handler = setTimeout(() => {
+        setDebouncedSearch(search);
+      }, 1000);
 
-        return () => clearTimeout(handler);
+      return () => clearTimeout(handler);
     }, [search]);
+
 
     useEffect(() => {
         
-        getAllSnippets(page, search, tag)
-        .then((data: GetSnippetsResponse) => {
-          setSnippets(data.items);
-          setPages(data.pages);
-        })
-        .catch(err => console.error(err))
-        .finally(() => setLoading(false));
+      getAllSnippets(page, search, tag)
+      .then((data: GetSnippetsResponse) => {
+        setSnippets(data.items);
+        setPages(data.pages);
+      })
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
 
     }, [page, debouncedSearch, tag]);
+    
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
       e.preventDefault();
@@ -46,7 +47,14 @@ export default function SnippetsList() {
       try {
         await deleteSnippet(id);
 
-        setSnippets(prev => prev.filter(el => el._id !== id));
+        const updatedSnippets = snippets.filter(el => el._id !== id);
+        
+        if (updatedSnippets.length === 0 && page > 1) {
+          setPage(page - 1); 
+        } else {
+          setSnippets(updatedSnippets);
+        }
+
       } catch (err) {
         alert("Не вдалося видалити сніпет");
       }
