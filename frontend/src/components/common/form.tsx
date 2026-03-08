@@ -1,37 +1,29 @@
 'use client'
 import React, {useState} from 'react'
 import {Form, Input, Button, Select, SelectItem, Textarea} from "@heroui/react";
-import { createSnippet } from '@/src/lib/snippets.api';
 import { CreateSnippetDto } from '@/src/types/snippet';
 
 interface IProps {
+    initialData?: CreateSnippetDto;
+    onSubmit: (data: CreateSnippetDto) => Promise<void>;
     onClose: () => void;
 }
 
 
-export default function AddingForm({onClose}: IProps) {
+export default function CustomForm({ initialData, onSubmit , onClose}: IProps) {
 
     const [formData, setFormData] = useState<CreateSnippetDto>(
         {
-            title: '',
-            content: '',
-            tags: [],
-            type: 'note'
+            title: initialData?.title || '',
+            content: initialData?.content || '',
+            tags: initialData?.tags || [],
+            type: initialData?.type || 'note',
         }
     )
 
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const payload: CreateSnippetDto = {
-            title: formData.title,
-            content: formData.content,
-            tags: formData.tags,
-            type: formData.type,
-        };
-
-        await createSnippet(payload);
+        await onSubmit(formData);
         onClose();
     }
 
@@ -68,6 +60,11 @@ export default function AddingForm({onClose}: IProps) {
         <Select
         placeholder="Type"
         variant="bordered"
+        selectedKeys={[formData.type]}
+        onSelectionChange={(keys) => {
+            const value = Array.from(keys)[0] as string
+            setFormData({...formData, type: value as any})
+        }}
         classNames={{
             label: "text-default-500 pb-2",
             trigger: "bg-pink-100 border-2 border-gray-100",

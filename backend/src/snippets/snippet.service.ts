@@ -16,7 +16,7 @@ export class SnippetService {
 
   async findAll(query: {q?:  string, title?: string, tag?: string; page?: number; limit?: number}) {
     
-    const { q, tag, page = 1, limit = 10 } = query;
+    const { q, tag, page = 1, limit = 5 } = query;
     const filter: any = {};
 
     if (q) {

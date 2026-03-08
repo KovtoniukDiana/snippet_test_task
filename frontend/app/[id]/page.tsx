@@ -3,14 +3,15 @@ import React,{ useState, useEffect } from 'react'
 import { useParams } from 'next/navigation';
 import { Snippet } from '@/src/types/snippet';
 import { getSnippet } from '@/src/lib/snippets.api';
+import EditModal from '@/src/components/editingModal';
 
 
 export default function SnippetPage() {
 
     const { id } = useParams();
     const [snippet, setSnippet] = useState<Snippet | null>(null);
-    const [loading, setLoading] = useState(true);
-
+    const [isModalOpen, setIsModalOpen] =  useState(false);
+    
 
     useEffect(() => {
         if (!id) return;
@@ -20,25 +21,28 @@ export default function SnippetPage() {
         getSnippet(snippetId)
         .then(setSnippet)
         .catch(err => console.error(err))
-        .finally(() => setLoading(false));
     }, [id]);
 
+    
 
 
   return (
     <div className='h-screen bg-blue-100 flex flex-col items-center pt-17'>
       {
-        snippet && 
+        snippet ? 
         <div className='w-[85%] bg-white rounded-lg shadow-lg flex flex-col gap-4 p-4'>
             <div className='w-full flex justify-between'>
                 <p className="text-2xl font-bold">{snippet.title}</p>
 
-                <div className='w-fit flex gap-2 cursor-pointer'>
+                <div className='w-fit flex gap-2 cursor-pointer'
+                onClick={() => setIsModalOpen(true)}>
                     <span>Редагувати</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
                     </svg>
                 </div>
+
+                <EditModal id={id as string} initialData={snippet} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             </div>
 
 
@@ -55,6 +59,10 @@ export default function SnippetPage() {
             </p>
             <p className="mt-2 text-lg">{snippet.content}</p>
         </div>
+
+        :
+        
+        <div className='text-lg'>Loading...</div>
       }
     </div>
   )

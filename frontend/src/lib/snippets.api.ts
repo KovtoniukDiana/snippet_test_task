@@ -1,4 +1,4 @@
-import { Snippet, CreateSnippetDto, UpdateSnippetDto, GetSnippetsResponse } from "../types/snippet";
+import { Snippet, CreateSnippetDto, GetSnippetsResponse } from "../types/snippet";
 
 const BASE_URL = 'http://localhost:5000/api/snippets';
 
@@ -25,15 +25,24 @@ export function createSnippet(data: CreateSnippetDto) {
   });
 }
 
-export function getAllSnippets(): Promise<GetSnippetsResponse> {
-  return request<GetSnippetsResponse>("/");
+export function getAllSnippets(page = 1, q?: string, tag?: string): Promise<GetSnippetsResponse> {
+
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: '5'
+  });
+
+  if (q) params.append("q", q);
+  if (tag) params.append("tag", tag);
+
+  return request<GetSnippetsResponse>(`?${params}`);
 }
 
 export function getSnippet(id: string) {
   return request<Snippet>(`/${id}`);
 }
 
-export function updateSnippet(id: string, data: UpdateSnippetDto) {
+export function updateSnippet(id: string, data: CreateSnippetDto) {
   return request<Snippet>(`/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),

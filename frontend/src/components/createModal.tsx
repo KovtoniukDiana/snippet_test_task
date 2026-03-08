@@ -1,6 +1,7 @@
 'use client'
 import CustomModal from "./common/modal"
-import AddingForm from "./common/form";
+import AddingForm from "./addingForm";
+
 
 interface IProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface IProps {
 export default function CreateModal({isOpen, onClose}: IProps) {
   return (
     <CustomModal isOpen={isOpen} onClose={onClose} title="Створити сніпет">
-        <AddingForm onClose={onClose} />
+        <AddingForm  onClose={onClose} />
     </CustomModal>
   )
 }
